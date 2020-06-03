@@ -55,8 +55,7 @@ fn main() -> Result<(), ExitFailure> {
     Ok(())
 }
 
-#[allow(clippy::cognitive_complexity)]
-fn run() -> Result<(), failure::Error> {
+fn build_cli() -> App<'static, 'static> {
     // Define commonly used arguments and arg groups up front for consistency
     // The args below are for KV Subcommands
     let kv_binding_arg = Arg::with_name("binding")
@@ -99,7 +98,7 @@ fn run() -> Result<(), failure::Error> {
 
     let silent_verbose_arg = verbose_arg.clone().hidden(true);
 
-    let matches = App::new(format!("{}{} wrangler", emoji::WORKER, emoji::SPARKLES))
+    App::new(format!("{}{} wrangler", emoji::WORKER, emoji::SPARKLES))
         .version(env!("CARGO_PKG_VERSION"))
         .author("The Wrangler Team <wrangler@cloudflare.com>")
         .setting(AppSettings::ArgRequiredElseHelp)
@@ -577,7 +576,12 @@ fn run() -> Result<(), failure::Error> {
                 )
                 .arg(verbose_arg.clone())
         )
-        .get_matches();
+}
+
+#[allow(clippy::cognitive_complexity)]
+fn run() -> Result<(), failure::Error> { 
+
+    let matches = build_cli().get_matches();
 
     let config_path = Path::new("./wrangler.toml");
 
